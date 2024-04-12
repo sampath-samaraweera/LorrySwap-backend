@@ -1,0 +1,269 @@
+openapi: 3.0.3
+info:
+  title: LorrySwap Driver APP API - OpenAPI 3.0
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: fernandowkd.21@itfac.mrt.ac.lk
+  version: 1.0.11
+servers:
+  - url: https://lorryswapbackendtest2.azurewebsites.net  
+
+tags:
+  - name: ride
+    description: Driver's ride
+    
+paths:
+  /ride:
+    post:
+      tags:
+        - ride
+      summary: Create ride
+      description: This can only be done when driver creates a ride.
+      operationId: ride.create_ride
+      requestBody:
+        description: Created ride object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ride'
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid data supplied
+
+  /rideList:
+    get:
+      summary: Returns a list of users.
+      description: Optional extended description in CommonMark or HTML
+      operationId: ride.get_all_rides
+      responses:
+        '200':
+          description: A JSON array of user names
+          content:
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  type: string
+    
+  /suggestedRides/{userId}:
+    get:
+      summary: Returns a list of suggested rides
+      description: Optional extended description in CommonMark
+      operationId: suggestedRide.suggested_ride
+      parameters:
+        - name: userId
+          in: path
+          description: The ID of the user for whom to retrieve suggested rides.
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A JSON array of suggested rides
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/suggestedRide'
+
+  /driver_confirm/{userId}:
+    put:
+      summary: Update a ride
+      description: Update an existing ride by its ID
+      operationId: suggestedRide.update_driver_confirmation
+      parameters:
+        - name: userId
+          in: path
+          description: ID of the driver, who got that rides
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: Confirm rides object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/confirmRide'
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid data supplied
+
+components:
+  schemas:
+    ride:
+      type: object
+      properties:
+        location:
+          type: string
+          example: "Colombo"
+        destination:
+          type: string
+          example: "Ratnapura"
+        location_lat:
+          type: string
+          example: 6.9270786
+        location_lon:
+          type: string
+          example: 6.370786
+        destination_lat:
+          type: string
+          example: 6.7055742
+        destination_lon:
+          type: string
+          example: 6.94786
+        date:
+          type: string
+          example: 2024-03-13T09:33:31.108Z
+        time:
+          type: string
+          example: Now
+        user_id:
+          type: integer
+          example: 2
+          
+    user_type:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        user_type:
+          type: string
+          example: "MS"
+          
+    user:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        fname:
+          type: string
+          example: "John Doe"
+        photo:
+          type: string
+          example: "../assests/images/default.jpg"
+          
+    suggestedRide:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 1
+        user_id:
+          type: integer
+          format: int64
+          example: 123
+        contact_recipient:
+          type: string
+          example: "0717578790"
+        date:
+          type: string
+          format: date-time
+          example: "2022-03-13T09:33:31.108Z"
+        package_type:
+          type: string
+          example: "Fragile"
+        weight:
+          type: number  # Changed type from 'float' to 'number'
+          example: 100.0
+        height:
+          type: number  # Changed type from 'float' to 'number'
+          example: 50.0
+        length:
+          type: number  # Changed type from 'float' to 'number'
+          example: 100.0
+        width:
+          type: number  # Changed type from 'float' to 'number'
+          example: 80.0
+        truck_type:
+          type: string
+          example: "Covered"
+        location:
+          type: string
+          example: "Colombo"
+        destination:
+          type: string
+          example: "Ratnapura"
+        plat:
+          type: string  
+          example: "6.7055742"  
+        plon:
+          type: string  
+          example: "79.861243"  
+        dlat:
+          type: string 
+          example: "6.9270786" 
+        dlon:
+          type: string  
+          example: "79.861243"
+        driver_id:
+          type: integer
+          format: int64
+          example: 123
+        driver_confirmation:
+          type: boolean  
+          example: false
+        cf_confirmation:
+          type: boolean  
+          example: false
+        finished:
+          type: boolean  
+          example: false
+    
+    confirmRide:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+          user_id:
+            type: integer
+          contact_recipient:
+            type: string
+          date:
+            type: string
+            format: date-time
+          package_type:
+            type: string
+          weight:
+            type: number
+          height:
+            type: number
+          length:
+            type: number
+          width:
+            type: number
+          truck_type:
+            type: string
+          location:
+            type: string
+          destination:
+            type: string
+          plat:
+            type: string
+          plon:
+            type: string
+          dlat:
+            type: string
+          dlon:
+            type: string
+          driver_id:
+            type: integer
+            format: int64
+            nullable: true
+          driver_confirmation:
+            type: boolean
+          cf_confirmation:
+            type: boolean
+          finished:
+            type: boolean
