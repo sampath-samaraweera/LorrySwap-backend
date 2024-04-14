@@ -37,6 +37,8 @@ def suggested_ride(userId=None):
         SuggestedRide.finished,
         User.phone,
         User.lname,
+        SuggestedRide.driver_rejection,
+        SuggestedRide.cf_rejection,
         )\
         .join(User, UserType.user_id == User.id) \
         .join(SuggestedRide, SuggestedRide.user_id == User.id) \
@@ -83,6 +85,8 @@ def suggested_ride(userId=None):
             'driver_confirmation' : ride[19],
             'cf_confirmation' : ride[20],
             'finished' : ride[21],
+            'driver_rejection' : ride[24],
+            'cf_rejection' : ride[25]
         }
         # print(ride_dict)
         ride_list.append(ride_dict)
@@ -123,9 +127,13 @@ def matchRide(driver_ride, all_rides):
                 current_coordLng = f"{round(coordinate[1], 1)}"
                 current_ride_PLat = f"{round(float(ride[13]), 1)}"
                 current_ride_PLng = f"{round(float(ride[14]), 1)}"
+                current_ride_DLat = f"{round(float(ride[15]), 1)}"
+                current_ride_DLng = f"{round(float(ride[16]), 1)}"
 
                 if (current_ride_PLat == current_coordLat and current_ride_PLng == current_coordLng and ride[19] == False):
                     ride_list_pickup.append(ride)
+                    break;
+                if (current_ride_DLat == current_coordLat and current_ride_DLng == current_coordLng and ride[19] == False):
                     break;
 
         for ride in ride_list_pickup:
@@ -147,33 +155,3 @@ def matchRide(driver_ride, all_rides):
     
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-    
-
-def update_driver_confirmation(userId, body):
-    
-    print(body)
-    print(userId)
-    session = Session()
-
-    try:
-        for ride_data in body:
-            ride_id = ride_data.get('id')
-            confirmed_ride = session.query(SuggestedRide).filter(SuggestedRide.id == ride_id).first()
-            
-            # Check if the ride exists
-            if confirmed_ride:
-                # Update the driver confirmation and driver id
-                confirmed_ride.driver_confirmation = True
-                confirmed_ride.driver_id = userId
-                session.commit()
-            else:
-                # Handle case where the ride does not exist
-                print(f"Ride with id {ride_id} does not exist.")
-
-    except Exception as e:
-        session.rollback()
-        return {'error': str(e)}, 500
-    finally:
-        session.close()
-
-    

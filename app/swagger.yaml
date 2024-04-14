@@ -16,7 +16,7 @@ paths:
   /ride:
     post:
       tags:
-        - ride
+        - Driver Ride
       summary: Create ride
       description: This can only be done when driver creates a ride.
       operationId: ride.create_ride
@@ -34,6 +34,8 @@ paths:
 
   /rideList:
     get:
+      tags:
+        - Driver Ride
       summary: Returns a list of users.
       description: Optional extended description in CommonMark or HTML
       operationId: ride.get_all_rides
@@ -46,9 +48,53 @@ paths:
                 type: array
                 items: 
                   type: string
+
+  /current_ride/{userId}:
+    get:
+      tags:
+        - Driver Ride
+      summary: Returns a list of users.
+      description: Optional extended description in CommonMark or HTML
+      operationId: ride.get_current_ride
+      parameters:
+        - name: userId
+          in: path
+          description: The ID of the driver.
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: JSON data of driver ride details.
+          content:
+            application/json:
+              schema: 
+                type: object
+              
+  /delete_rides/{userId}:
+    delete:
+      tags:
+        - Driver Ride
+      summary: Delete a ride
+      description: Deletes a ride based on the user ID.
+      operationId: ride.delete_ride
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          description: The ID of the user whose ride will be deleted.
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Ride deleted successfully
+        '404':
+          description: Ride not found
     
   /suggestedRides/{userId}:
     get:
+      tags:
+        - Suggested Ride
       summary: Returns a list of suggested rides
       description: Optional extended description in CommonMark
       operationId: suggestedRide.suggested_ride
@@ -71,9 +117,11 @@ paths:
 
   /driver_confirm/{userId}:
     put:
+      tags:
+        - Confirmed Ride
       summary: Update a ride
       description: Update an existing ride by its ID
-      operationId: suggestedRide.update_driver_confirmation
+      operationId: confirmRide.update_driver_confirmation
       parameters:
         - name: userId
           in: path
@@ -92,6 +140,31 @@ paths:
           description: successful operation
         '400':
           description: Invalid data supplied
+
+  /confirm_ride/{userId}:
+    get:
+      tags:
+        - Confirmed Ride
+      summary: Returns a list of confirm rides
+      description: Optional extended description in CommonMark
+      operationId: confirmRide.confirm_ride
+      parameters:
+        - name: userId
+          in: path
+          description: The ID of the user for whom to retrieve confirm rides.
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A JSON array of confirm rides
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/suggestedRide'
+
 
 components:
   schemas:
@@ -125,6 +198,9 @@ components:
         user_id:
           type: integer
           example: 2
+        finished_ride:
+          type: boolean
+          example: false
           
     user_type:
       type: object
@@ -218,6 +294,10 @@ components:
         finished:
           type: boolean  
           example: false
+        driver_rejection:
+          type: boolean
+        cf_rejection:
+          type: boolean
     
     confirmRide:
       type: array
@@ -266,4 +346,8 @@ components:
           cf_confirmation:
             type: boolean
           finished:
+            type: boolean
+          driver_rejection:
+            type: boolean
+          cf_rejection:
             type: boolean

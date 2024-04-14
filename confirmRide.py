@@ -4,7 +4,7 @@ from flask import jsonify
 import requests
 import polyline
 
-def suggested_ride(userId=None):
+def confirm_ride(userId = None):
 
     print(userId)
 
@@ -37,6 +37,8 @@ def suggested_ride(userId=None):
         SuggestedRide.finished,
         User.phone,
         User.lname,
+        SuggestedRide.driver_rejection,
+        SuggestedRide.cf_rejection,
         )\
         .join(User, UserType.user_id == User.id) \
         .join(SuggestedRide, SuggestedRide.user_id == User.id) \
@@ -46,34 +48,38 @@ def suggested_ride(userId=None):
 
     ride_list = []
     for ride in all_rides:
-        ride_dict = {
-            'id': ride[17],
-            'contact_recipient' : ride[3],
-            'date' : ride[4],
-            'package_type' : ride[5],
-            'weight' : ride[6],
-            'height' : ride[7],
-            'length' : ride[8],
-            'width' : ride[9],
-            'truck_type' : ride[10],
-            'photo' : ride[2],
-            'location' : ride[11],
-            'destination' : ride[12],
-            'plat' : ride[13],
-            'plon' : ride[14],
-            'dlat' : ride[15],
-            'dlon':  ride[16],
-            'actor' : ride[0],
-            'fname' : ride[1],
-            'lname' : ride[23],
-            'phone' : ride[22],
-            'driver_id' : ride[18],
-            'driver_confirmation' : ride[19],
-            'cf_confirmation' : ride[20],
-            'finished' : ride[21],
-        }
-        # print(ride_dict)
-        ride_list.append(ride_dict)
+        if (ride[19]==1 and ride[21]==0 and ride[18]==userId):
+            ride_dict = {
+                'id': ride[17],
+                'contact_recipient' : ride[3],
+                'date' : ride[4],
+                'package_type' : ride[5],
+                'weight' : ride[6],
+                'height' : ride[7],
+                'length' : ride[8],
+                'width' : ride[9],
+                'truck_type' : ride[10],
+                'photo' : ride[2],
+                'location' : ride[11],
+                'destination' : ride[12],
+                'plat' : ride[13],
+                'plon' : ride[14],
+                'dlat' : ride[15],
+                'dlon':  ride[16],
+                'actor' : ride[0],
+                'fname' : ride[1],
+                'lname' : ride[23],
+                'phone' : ride[22],
+                'driver_id' : ride[18],
+                'driver_confirmation' : ride[19],
+                'cf_confirmation' : ride[20],
+                'finished' : ride[21],
+                'driver_rejection' : ride[24],
+                'cf_rejection' : ride[25]
+            }
+            print(ride_dict)
+            
+            ride_list.append(ride_dict)
     return ride_list
 
 def update_driver_confirmation(userId, body):

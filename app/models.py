@@ -44,8 +44,8 @@ class Ride(Base):
     __tablename__ = "ride"
 
     id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
-    location = Column(String(20), nullable=False)
-    destination = Column(String(20), nullable=False)
+    location = Column(String(300), nullable=False)
+    destination = Column(String(300), nullable=False)
     location_lat = Column(String(50), nullable=False)
     location_lon = Column(String(50), nullable=False)
     destination_lat = Column(String(50), nullable=False)
@@ -53,6 +53,7 @@ class Ride(Base):
     date = Column(DATE, nullable=False)
     time = Column(String(150), nullable=False)
     user_id = Column(Integer, ForeignKey('user.id'))
+    finished_ride = Column(Boolean, nullable=False, server_default='false')
 
 class SuggestedRide(Base):
     __tablename__ = "suggestedRide"
@@ -77,6 +78,9 @@ class SuggestedRide(Base):
     driver_confirmation = Column(Boolean, nullable=False, server_default='false')
     cf_confirmation = Column(Boolean, nullable=False, server_default='false')
     finished = Column(Boolean, nullable=False, server_default='false')
+    driver_rejection = Column(Boolean, nullable=False, server_default='false')
+    cf_rejection = Column(Boolean, nullable=False, server_default='false')
+
 
 
     def __str__(self):
